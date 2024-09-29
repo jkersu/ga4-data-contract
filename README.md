@@ -86,7 +86,7 @@ If you would like to validate the structure of individual Item / Product in a GA
 - Make sure the `title` keyword in the Firestore schema is set to `product` as the variable template currently assumes this by default.
 - In the schema for the GA4 ecommerce event, under the `properties` keyword add an `items` parameter. An example can be found in `schemas/purchase.schema.json`
 
-## How to run import schemas from Google Cloud Storage to Firestore:
+## How to import a schema from Google Cloud Storage to Firestore:
 
 Once you have created the schema rules for the GA4 events you want to validate (in the same format as examples in the `schemas` directory), the easiest way to upload them into a Firestore collection is to use `app.py` Python script.
 
