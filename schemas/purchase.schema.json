@@ -1,0 +1,72 @@
+{
+    "$id": "https://example.com/purchase.schema.json",
+    "title": "purchase",
+    "description": "Definition of a GA4 purchase event",
+    "type": "object",
+    "properties": {
+        "transaction_id": {
+            "description": "The unique identifier of a transaction",
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 10,
+            "examples": [
+                "T_12345"
+            ]
+        },
+        "value": {
+            "description": "The monetary value of the event",
+            "type": "number",
+            "minimum": 0,
+            "examples": [
+                "Google"
+            ]
+        },
+        "currency": {
+            "description": "Currency of the items associated with the event",
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "examples": [
+                "USD"
+            ]
+        },
+        "coupon": {
+            "description": "The coupon name/code associated with the event",
+            "type": "string",
+            "examples": [
+                "SUMMER_FUN"
+            ]
+        },
+        "shipping": {
+            "description": "Shipping cost associated with a transaction",
+            "type": "number",
+            "minimum": 0,
+            "examples": [
+                3.33
+            ]
+        },
+        "tax": {
+            "description": "Tax cost associated with a transaction",
+            "type": "number",
+            "minimum": 0,
+            "examples": [
+                1.11
+            ]
+        },
+        "items": {
+            "title": "Purchased Items",
+            "description": "Items associated with the event",
+            "type": "array",
+            "items": {
+                "$ref": "https://example.com/product.schema.json"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    },
+    "required": [
+        "transaction_id",
+        "currency",
+        "value",
+        "items"
+    ]
+}

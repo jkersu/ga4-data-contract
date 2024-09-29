@@ -1,0 +1,22 @@
+{
+    "$id": "https://example.com/login.schema.json",
+    "title": "login",
+    "description": "Definition of a GA4 login event",
+    "type": "object",
+    "properties": {
+        "method": {
+            "description": "The method used to login",
+            "type": "string",
+            "enum": ["email", "google", "facebook"]
+        },
+         "user_id": {
+            "description": "Backend-generated ID for a logged-in user",
+            "type": "string",
+            "pattern": "^[0-9]*$"
+        }
+    },
+    "required": [
+        "method",
+        "user_id"
+    ]
+}
