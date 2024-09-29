@@ -6,7 +6,7 @@ You can use this variable template for Google Tag Manager Server Side container 
 ## Repository Structure
 <ul>
     <li><b>datalayer-test:</b> example datalayer pushes for certain GA4 events that either pass or fails validation against the example schemas in "schemas"</li>
-    <li><b>gtm-templates:</b> contains the raw Javascript code for the GTM variable template (template-code.js). "Firestore Data Contract - Event Validation.tpl" can be imported directly into a GTM Server Side container</li>
+    <li><b>gtm-templates:</b> contains the raw Javascript code for the GTM variable template (template.js). "template.tpl" can be imported directly into a GTM Server Side container</li>
     <li><b>images:</b> contains images for this repo</li>
     <li><b>schemas:</b> some example schemas for certain GA4 events and GA4 ecommerce item (product) to be used as reference and starting point</li>
     <li><b>app.py:</b> a basic Python script that imports JSON file(s) from a Google Cloud Storage bucket into a Firestore collection</li>
