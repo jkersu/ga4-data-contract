@@ -47,10 +47,17 @@ Additionally, if the event fails validation against a schema and the variable te
 ### How to setup variable template
 
 1. Import the "Firestore Data Contract - Event Validation.tpl" file in the "gtm-templates" directory into a GTM Server-Side container.
-2. Create a new variable using the imported template in Step 1.
+<br><br>
+2. Create a new variable using the imported template in Step 1. In the new variable under "GA4 Events with Validation", list the name of all GA4 events which have a schema in Firestore. The variable will only query Firestore for these event schemas, this is done to reduce Firestore costs as even queries with empty results will cost 1 document read.
+<br><br>
+<img src="images/define-events.png">
+<br><br>
 3. Create a new transformation which augments event data values and apply it to any events you would like to add an additional validation parameter. We will assume we have called this: "validated_data" (See the "How it works" section Step 2 for example images)
+<br><br>
 4. For the "validated_data" parameter, the value should be a reference to the variable in Step 2 (See the "How it works" section Step 3 for example images)
+<br><br>
 5. (optional) If you would like to enable BigQuery logging of errors, it is assumed that all GA4 events sent from a Client-Side container should contain a parameter "event_id" which has a unique ID value for each event sent. Update all client-side Web GA4 tags to have this paramter.
+<br><br>
 6. All done!
 
 ### Setting up BigQuery Logging for Failed Events
