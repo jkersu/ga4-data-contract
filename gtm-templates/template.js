@@ -8,6 +8,7 @@ const createRegex = require('createRegex');
 const testRegex = require('testRegex');
 const logToConsole = require('logToConsole');
 const getAllEventData = require('getAllEventData');
+const templateDataStorage = require('templateDataStorage');
 
 /* 
 This function checks the Items array for GA4 ecommerce events against a schema for items. 
@@ -196,51 +197,62 @@ if (events_with_validation && events_with_validation.length > 0 && events_with_v
     // Searches for schema for the event and a default "product" schema (if it exists) for a GA4 product inside a GA4 items array
     const queries = [['title', 'in', [event_to_check, 'product']]];
 
-    return Firestore.query(data.firestore_collection_name, queries, {
-        projectId: data.gcp_project_id,
-        limit: 2,
-    }).then((documents) => {
+    const template_cache_key = 'gtm_schema_cache';
+    let firestore_documents;
+    if (!templateDataStorage.getItemCopy(template_cache_key)) {
+        return Firestore.query(data.firestore_collection_name, queries, {
+            projectId: data.gcp_project_id,
+            limit: 2,
+        }).then((documents) => {
+            templateDataStorage.setItemCopy(template_cache_key, documents);
+            firestore_documents = documents;
+        });
 
-        // Assume by default no contract rules exist for event
-        let validation_result = 1;
+    } else {
+        firestore_documents = templateDataStorage.getItemCopy(template_cache_key);
+    }
 
-        if (documents.length > 0) {
-            // Schema for the GA4 event
-            let eventSchema = documents.filter(schema => schema.data.title !== 'product');
 
-            if (eventSchema.length > 0) {
-                const schema = eventSchema[0].data;
-                const payload = getAllEventData();
 
-                // Schema for a single product inside a GA4 ecommerce items array
-                let productSchema = documents.filter(schema => schema.data.title === 'product');
+    // Assume by default no contract rules exist for event
+    let validation_result = 1;
 
-                // Any failed validation checks will be stored in this "errors" array
-                let errors = [];
-                errors = data_contract_checks.validate(schema, payload, errors, productSchema);
+    if (firestore_documents.length > 0) {
+        // Schema for the GA4 event
+        let eventSchema = firestore_documents.filter(schema => schema.data.title !== 'product');
 
-                if (errors.length > 0) {
-                    errors.forEach(error => {
-                        logToConsole('ERROR', error);
-                    });
+        if (eventSchema.length > 0) {
+            const schema = eventSchema[0].data;
+            const payload = getAllEventData();
 
-                    // Failed validation check to be returned as transformation variable
-                    validation_result = 0;
+            // Schema for a single product inside a GA4 ecommerce items array
+            let productSchema = firestore_documents.filter(schema => schema.data.title === 'product');
 
-                    // Log the errors to a destination BigQuery table
-                    if (data.log_errors_to_bq) {
-                        log_failed_checks_to_BQ(errors);
-                    }
+            // Any failed validation checks will be stored in this "errors" array
+            let errors = [];
+            errors = data_contract_checks.validate(schema, payload, errors, productSchema);
 
-                } else {
-                    // If no errors, log success
-                    logToConsole('INFO', 'Payload is valid');
+            if (errors.length > 0) {
+                errors.forEach(error => {
+                    logToConsole('ERROR', error);
+                });
+
+                // Failed validation check to be returned as transformation variable
+                validation_result = 0;
+
+                // Log the errors to a destination BigQuery table
+                if (data.log_errors_to_bq) {
+                    log_failed_checks_to_BQ(errors);
                 }
+
+            } else {
+                // If no errors, log success
+                logToConsole('INFO', 'Payload is valid');
             }
         }
-        // Return 1 if event matches and validates successfully against an provided schema. Return 0 if failed.
-        return validation_result;
-    });
+    }
+    // Return 1 if event matches and validates successfully against an provided schema. Return 0 if failed.
+    return validation_result;
 }
 // Not an event which needs validation
 return 1;
