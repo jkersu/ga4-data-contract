@@ -1,7 +1,7 @@
 // Good event
 dataLayer.push({
     'event': 'login',
-    'method': 'password',
+    'method': 'google',
     'user_id' : '123'
 });
 
