@@ -2,7 +2,7 @@
 dataLayer.push({
     'event': 'login',
     'method': 'password',
-    'user_id' : 'a123'
+    'user_id' : '123'
 });
 
 /* Example of bad event: 
